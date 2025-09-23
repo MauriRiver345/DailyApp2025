@@ -6,14 +6,15 @@ using API.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Text;
+using API.Interfaces;
 
 
 namespace API.Controllers;
 
-public class AccountController(AppDbContext context) : BaseApiController
+public class AccountController(AppDbContext context, ITokenService tokenService) : BaseApiController
 {
     [HttpPost("register")]
-    public async Task<ActionResult<AppUser>> Register(RegisterRequest request)
+    public async Task<ActionResult<UserResponse>> Register(RegisterRequest request)
     {
         if (await EmailExists(request.Email)) return BadRequest("Email is already taken");
 
@@ -23,18 +24,24 @@ public class AccountController(AppDbContext context) : BaseApiController
         {
             DisplayName = request.DisplayName,
             Email = request.Email,
-            PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.Password)),
+            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Password)),
             PasswordSalt = hmac.Key
         };
 
         context.Users.Add(user);
         await context.SaveChangesAsync();
 
-        return user;
+        return new UserResponse
+        {
+            Id = user.Id,
+            DisplayName = user.DisplayName,
+            Email = user.Email,
+            Token = tokenService.CreateToken(user)
+        };
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<AppUser>> Login(LoginRequest request)
+    public async Task<ActionResult<UserResponse>> Login(LoginRequest request)
     {
         var user = await context.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
 
@@ -52,7 +59,13 @@ public class AccountController(AppDbContext context) : BaseApiController
             }
         }
 
-        return user;
+        return new UserResponse
+        {
+            Id = user.Id,
+            DisplayName = user.DisplayName,
+            Email = user.Email,
+            Token = tokenService.CreateToken(user)
+        };
    }
     
     private async Task<bool> EmailExists(string email)
