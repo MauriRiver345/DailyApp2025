@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Text;
 using API.Interfaces;
+using API.Extensions;
 
 
 namespace API.Controllers;
@@ -31,13 +32,7 @@ public class AccountController(AppDbContext context, ITokenService tokenService)
         context.Users.Add(user);
         await context.SaveChangesAsync();
 
-        return new UserResponse
-        {
-            Id = user.Id,
-            DisplayName = user.DisplayName,
-            Email = user.Email,
-            Token = tokenService.CreateToken(user)
-        };
+        return user.ToDto(tokenService);
     }
 
     [HttpPost("login")]
@@ -59,13 +54,7 @@ public class AccountController(AppDbContext context, ITokenService tokenService)
             }
         }
 
-        return new UserResponse
-        {
-            Id = user.Id,
-            DisplayName = user.DisplayName,
-            Email = user.Email,
-            Token = tokenService.CreateToken(user)
-        };
+        return user.ToDto(tokenService);
    }
     
     private async Task<bool> EmailExists(string email)
