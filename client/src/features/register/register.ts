@@ -9,7 +9,6 @@ import { RegisterCreds, User } from '../../types/user';
   styleUrl: './register.css'
 })
 export class Register {
-  membersFromHome  = input.required<User[]>();
   cancelRegister = output<boolean>();
   protected creds = {} as RegisterCreds;
 

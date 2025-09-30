@@ -16,10 +16,7 @@
         </div>
     } @else {
         <div class="text-2xl w-full text-center flex justify-center">
-            <app-register 
-                class="w-full" 
-                [membersFromHome]="usersFromApp"
-                (cancelRegister)="showRegister($event)"/>
+            <app-register class="w-full" (cancelRegister)="showRegister($event)"/>
         </div>
 }
 </div>
