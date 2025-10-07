@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class ToastService {
 
   constructor() {
-    this.createToastContainer
+    this.createToastContainer();
   }
 
   private createToastContainer(): void{
