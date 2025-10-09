@@ -1,0 +1,9 @@
+<div class="card bg-base-100 gap-3 w-4xl mx-auto flex flex-col items-center rounded-xl shadow-xl p-10">
+    <img width="100" height="100" src="https://img.icons8.com/nolan/64/bug.png" alt="bug"/>
+    <h1 class="card-title text-4xl justify-center">Server Error</h1>
+    <p class="card-body text-xl text-center">{{error()?.message}}</p>
+    <button class="btn btn-primary" (click)="detailsToggle()">Details</button>
+    @if (showDetails) {
+        <div>{{error()?.details}}</div>
+    }
+</div>
